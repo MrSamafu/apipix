@@ -1,4 +1,5 @@
 require('dotenv').config();
+const cors = require('cors');
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
@@ -10,6 +11,12 @@ const referentielRoutes = require('./routes/referentielRoutes');
 const collectionJeuxRoutes = require('./routes/collectionJeuxRoutes');
 const collectionConsolesRoutes = require('./routes/collectionConsolesRoutes');
 const collectionAccessoiresRoutes = require('./routes/collectionAccessoiresRoutes');
+
+app.use(cors({
+    origin: 'http://141.95.159.41:5173',  // Frontend autorisé
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Middleware pour parser le JSON
 app.use(express.json());
