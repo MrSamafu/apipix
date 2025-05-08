@@ -73,7 +73,7 @@ exports.deleteUtilisateur = (req, res) => {
 
 exports.verifyUtilisteurToken = (req, res) => {
     const { token, email } = req.body;
-    db.query('SELECT date_expiration FROM utilisateurs WHERE email = ? AND token = ?', [email, token], (err, results) => {
+    db.query('SELECT id,date_expiration,role FROM utilisateurs WHERE email = ? AND token = ?', [email, token], (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
         if (results.length === 0) return res.status(401).json({ error: 'Token invalide' });
         
