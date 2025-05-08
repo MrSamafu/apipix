@@ -27,6 +27,11 @@ exports.login = (req, res) => {
         if (!validPassword) return res.status(401).json({ error: 'Mot de passe incorrect' });
 
         const token = jwt.sign({ id: user.id, role: user.role }, process.env.SECRET_KEY, { expiresIn: '1h' });
+        db.query('UPDATE utilisateurs SET token = ?,date_expiration = NOW() WHERE id = ?', [token, user.id], (err) => {
+            if (err) return res.status(500).json({ error: err.message });
+            // Token mis à jour dans la base de données
+        });
+        // Envoi du token au client
         res.json({ token });
     });
 };
