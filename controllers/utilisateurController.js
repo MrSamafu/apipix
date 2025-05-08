@@ -32,7 +32,11 @@ exports.login = (req, res) => {
             // Token mis à jour dans la base de données
         });
         // Envoi du token au client
-        res.json({ token });
+        res.json({ 
+            token,
+            email: user.email,
+            role: user.role,
+         });
     });
 };
 
