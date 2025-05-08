@@ -81,6 +81,12 @@ exports.verifyUtilisteurToken = (req, res) => {
         const isTokenExpired = new Date().setHours(new Date().getHours() - 1)  > new Date(user.date_expiration);
         
         if (isTokenExpired) return res.status(401).json({ error: 'Token expiré' });
+
+        const token = jwt.sign({ id: user.id, role: user.role }, process.env.SECRET_KEY, { expiresIn: '1h' });
+        db.query('UPDATE utilisateurs SET token = ?,date_expiration = NOW() WHERE id = ?', [token, userId], (err) => {
+            if (err) return res.status(500).json({ error: err.message });
+            // Token mis à jour dans la base de données
+        });
         
         res.json({ message: 'Token valide et mis a jour' });
     });
