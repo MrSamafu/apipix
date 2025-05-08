@@ -78,7 +78,7 @@ exports.verifyUtilisteurToken = (req, res) => {
         if (results.length === 0) return res.status(401).json({ error: 'Token invalide' });
         
         const user = results[0];
-        const isTokenExpired = new Date() > new Date(user.date_expiration);
+        const isTokenExpired = new Date().setHours(new Date().getHours() - 1)  > new Date(user.date_expiration);
         
         if (isTokenExpired) return res.status(401).json({ error: 'Token expiré' });
         
