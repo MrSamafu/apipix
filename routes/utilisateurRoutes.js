@@ -5,6 +5,7 @@ const authenticateToken = require('../middlewares/authMiddleware');
 
 router.post('/', utilisateurController.creerUtilisateur);
 router.post('/login', utilisateurController.login);
+router.post('/verifyToken', utilisateurController.verifyUtilisteurToken);
 router.get('/', authenticateToken, utilisateurController.getUtilisateurs);
 router.get('/:id', authenticateToken, utilisateurController.getUtilisateurById);
 router.put('/:id', authenticateToken, utilisateurController.updateUtilisateur);

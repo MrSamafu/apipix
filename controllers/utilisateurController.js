@@ -70,3 +70,18 @@ exports.deleteUtilisateur = (req, res) => {
         res.json({ message: 'Utilisateur supprimé avec succès' });
     });
 };
+
+exports.verifyUtilisteurToken = (req, res) => {
+    const { token, userId } = req.body;
+    db.query('SELECT date_expiration FROM utilisateurs WHERE id = ? AND token = ?', [userId, token], (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (results.length === 0) return res.status(401).json({ error: 'Token invalide' });
+        
+        const user = results[0];
+        const isTokenExpired = new Date() > new Date(user.date_expiration);
+        
+        if (isTokenExpired) return res.status(401).json({ error: 'Token expiré' });
+        
+        res.json({ message: 'Token valide et mis a jour' });
+    });
+}
