@@ -12,4 +12,4 @@ WORKDIR /apipix
 RUN npm install
 
 EXPOSE 3000
-CMD pm2 start index.js --name apipix
+CMD pm2-runtime start index.js --name apipix
