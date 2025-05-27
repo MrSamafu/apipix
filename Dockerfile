@@ -10,4 +10,4 @@ RUN git clone https://github.com/MrSamafu/apipix.git
 WORKDIR /apipix
 
 EXPOSE 3000
-CMD pm2 start apipix
+CMD pm2 start
