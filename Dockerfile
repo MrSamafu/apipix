@@ -9,5 +9,7 @@ RUN git clone https://github.com/MrSamafu/apipix.git
 
 WORKDIR /apipix
 
+RUN npm install
+
 EXPOSE 3000
-CMD pm2 start
+CMD pm2 start apipix
