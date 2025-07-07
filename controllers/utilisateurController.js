@@ -1,4 +1,4 @@
-const db = require('../models/db');
+const db = require('../config/db.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -14,13 +14,12 @@ exports.creerUtilisateur = async (req, res) => {
     });
 };
 
-exports.login = (req, res) => {
+exports.login = async (req, res) => {
     const { email, mot_de_passe } = req.body;
 
-    db.query('SELECT * FROM utilisateurs WHERE email = ?', [email], async (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
+    try {
+        const [results] = await db.query('SELECT * FROM utilisateurs WHERE email = ?', [email]);
         if (results.length === 0) return res.status(400).json({ error: 'Utilisateur non trouvé' });
-
         const user = results[0];
         const validPassword = await bcrypt.compare(mot_de_passe, user.mot_de_passe);
         
@@ -37,7 +36,9 @@ exports.login = (req, res) => {
             email: user.email,
             role: user.role,
          });
-    });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur interne du serveur' });
+    }
 };
 
 exports.getUtilisateurs = (req, res) => {

@@ -16,10 +16,10 @@ const pool = mysql.createPool({
 // Test de connexion
 pool.getConnection((err, connection) => {
   if (err) {
-    console.error('❌ Erreur de connexion à la base de données:', err);
+    console.error('❌ Erreur de connexion à la base de données: caribou   ---- ', err);
     process.exit(1);
   } else {
-    console.log('✅ Connecté à la base de données MySQL via pool');
+    console.log('✅ Connecté à la base de données MySQL via pool caribou');
     connection.release(); // Toujours relâcher la connexion après un test
   }
 });
