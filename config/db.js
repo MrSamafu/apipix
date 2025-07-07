@@ -1,20 +1,29 @@
-require('dotenv').config(); // Charger les variables d'environnement
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const mysql = require('mysql2');
 
-// Connexion à la base de données avec les variables d'environnement
-const db = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
+// Création d'un pool de connexions
+const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-db.connect(err => {
-    if (err) {
-        console.error('❌ Erreur de connexion à la base de données:', err);
-        process.exit(1);
-    }
-    console.log('✅ Connecté à la base de données MySQL');
+// Test de connexion
+pool.getConnection((err, connection) => {
+  if (err) {
+    console.error('❌ Erreur de connexion à la base de données:', err);
+    process.exit(1);
+  } else {
+    console.log('✅ Connecté à la base de données MySQL via pool');
+    connection.release(); // Toujours relâcher la connexion après un test
+  }
 });
 
-module.exports = db;
+// Export en mode promesse (pour async/await)
+module.exports = pool.promise();
+
