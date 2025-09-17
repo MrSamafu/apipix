@@ -6,7 +6,10 @@ exports.addConsoleToCollection = (req, res) => {
     const userId = req.user.id;
 
     CollectionConsoles.addConsoleToCollection(userId, console_id, quantite, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error('Erreur SQL addConsoleToCollection:', err);
+            return res.status(500).json({ error: err.message });
+        }
         res.status(201).json({ message: 'Console ajoutée à la collection', id: result.insertId });
     });
 };
@@ -17,7 +20,10 @@ exports.updateConsoleQuantity = (req, res) => {
     const userId = req.user.id;
 
     CollectionConsoles.updateConsoleQuantity(userId, console_id, quantite, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error('Erreur SQL updateConsoleQuantity:', err);
+            return res.status(500).json({ error: err.message });
+        }
         res.json({ message: 'Quantité mise à jour' });
     });
 };
@@ -28,7 +34,10 @@ exports.removeConsoleFromCollection = (req, res) => {
     const userId = req.user.id;
 
     CollectionConsoles.removeConsoleFromCollection(userId, console_id, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error('Erreur SQL removeConsoleFromCollection:', err);
+            return res.status(500).json({ error: err.message });
+        }
         res.json({ message: 'Console retirée de la collection' });
     });
 };
@@ -38,7 +47,10 @@ exports.getUserConsoleCollection = (req, res) => {
     const userId = req.user.id;
 
     CollectionConsoles.getUserConsoleCollection(userId, (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error('Erreur SQL getUserConsoleCollection:', err);
+            return res.status(500).json({ error: err.message });
+        }
         res.json(results);
     });
 };
@@ -49,7 +61,10 @@ exports.checkUserHasConsole = (req, res) => {
     const userId = req.user.id;
 
     CollectionConsoles.checkUserHasConsole(userId, console_id, (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error('Erreur SQL checkUserHasConsole:', err);
+            return res.status(500).json({ error: err.message });
+        }
         if (results.length === 0) return res.json({ hasConsole: false });
         res.json({ hasConsole: true, quantite: results[0].quantite });
     });

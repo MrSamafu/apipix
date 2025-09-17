@@ -6,7 +6,10 @@ exports.addAccessoireToCollection = (req, res) => {
     const userId = req.user.id;
 
     CollectionAccessoires.addAccessoireToCollection(userId, accessoire_id, quantite, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error('Erreur SQL addAccessoireToCollection:', err);
+            return res.status(500).json({ error: err.message });
+        }
         res.status(201).json({ message: 'Accessoire ajouté à la collection', id: result.insertId });
     });
 };
@@ -17,7 +20,10 @@ exports.updateAccessoireQuantity = (req, res) => {
     const userId = req.user.id;
 
     CollectionAccessoires.updateAccessoireQuantity(userId, accessoire_id, quantite, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error('Erreur SQL updateAccessoireQuantity:', err);
+            return res.status(500).json({ error: err.message });
+        }
         res.json({ message: 'Quantité mise à jour' });
     });
 };
@@ -28,7 +34,10 @@ exports.removeAccessoireFromCollection = (req, res) => {
     const userId = req.user.id;
 
     CollectionAccessoires.removeAccessoireFromCollection(userId, accessoire_id, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error('Erreur SQL removeAccessoireFromCollection:', err);
+            return res.status(500).json({ error: err.message });
+        }
         res.json({ message: 'Accessoire retiré de la collection' });
     });
 };
@@ -38,7 +47,10 @@ exports.getUserAccessoireCollection = (req, res) => {
     const userId = req.user.id;
 
     CollectionAccessoires.getUserAccessoireCollection(userId, (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error('Erreur SQL getUserAccessoireCollection:', err);
+            return res.status(500).json({ error: err.message });
+        }
         res.json(results);
     });
 };
@@ -49,7 +61,10 @@ exports.checkUserHasAccessoire = (req, res) => {
     const userId = req.user.id;
 
     CollectionAccessoires.checkUserHasAccessoire(userId, accessoire_id, (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error('Erreur SQL checkUserHasAccessoire:', err);
+            return res.status(500).json({ error: err.message });
+        }
         if (results.length === 0) return res.json({ hasAccessoire: false });
         res.json({ hasAccessoire: true, quantite: results[0].quantite });
     });

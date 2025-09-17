@@ -3,7 +3,7 @@ const db = require('../config/db');
 // Ajouter une console à la collection d'un utilisateur
 const addConsoleToCollection = (userId, consoleId, quantity, callback) => {
     db.query(
-        'INSERT INTO collection_consoles (utilisateur_id, console_id, quantite) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE quantite = quantite + ?',
+        'INSERT INTO collections_consoles (id_utilisateur, id_console, quantite) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE quantite = quantite + ?',
         [userId, consoleId, quantity, quantity],
         callback
     );
@@ -12,7 +12,7 @@ const addConsoleToCollection = (userId, consoleId, quantity, callback) => {
 // Mettre à jour la quantité d'une console dans la collection
 const updateConsoleQuantity = (userId, consoleId, quantity, callback) => {
     db.query(
-        'UPDATE collection_consoles SET quantite = ? WHERE utilisateur_id = ? AND console_id = ?',
+        'UPDATE collections_consoles SET quantite = ? WHERE id_utilisateur = ? AND id_console = ?',
         [quantity, userId, consoleId],
         callback
     );
@@ -21,7 +21,7 @@ const updateConsoleQuantity = (userId, consoleId, quantity, callback) => {
 // Supprimer une console de la collection d'un utilisateur
 const removeConsoleFromCollection = (userId, consoleId, callback) => {
     db.query(
-        'DELETE FROM collection_consoles WHERE utilisateur_id = ? AND console_id = ?',
+        'DELETE FROM collections_consoles WHERE id_utilisateur = ? AND id_console = ?',
         [userId, consoleId],
         callback
     );
@@ -30,7 +30,7 @@ const removeConsoleFromCollection = (userId, consoleId, callback) => {
 // Récupérer la collection de consoles d'un utilisateur
 const getUserConsoleCollection = (userId, callback) => {
     db.query(
-        'SELECT consoles.id, consoles.nom, consoles.description, consoles.image, collection_consoles.quantite FROM collection_consoles JOIN consoles ON collection_consoles.console_id = consoles.id WHERE collection_consoles.utilisateur_id = ?',
+        'SELECT consoles.id, consoles.nom, consoles.description, consoles.image_url, collections_consoles.quantite FROM collections_consoles JOIN consoles ON collections_consoles.id_console = consoles.id WHERE collections_consoles.id_utilisateur = ?',
         [userId],
         callback
     );
@@ -39,7 +39,7 @@ const getUserConsoleCollection = (userId, callback) => {
 // Vérifier si un utilisateur possède une console
 const checkUserHasConsole = (userId, consoleId, callback) => {
     db.query(
-        'SELECT quantite FROM collection_consoles WHERE utilisateur_id = ? AND console_id = ?',
+        'SELECT quantite FROM collections_consoles WHERE id_utilisateur = ? AND id_console = ?',
         [userId, consoleId],
         callback
     );

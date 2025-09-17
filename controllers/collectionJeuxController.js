@@ -6,7 +6,10 @@ exports.addGameToCollection = (req, res) => {
     const userId = req.user.id;
 
     CollectionJeux.addGameToCollection(userId, jeu_id, quantite, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error('Erreur SQL addGameToCollection:', err);
+            return res.status(500).json({ error: err.message });
+        }
         res.status(201).json({ message: 'Jeu ajouté à la collection', id: result.insertId });
     });
 };
@@ -17,7 +20,10 @@ exports.updateGameQuantity = (req, res) => {
     const userId = req.user.id;
 
     CollectionJeux.updateGameQuantity(userId, jeu_id, quantite, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error('Erreur SQL updateGameQuantity:', err);
+            return res.status(500).json({ error: err.message });
+        }
         res.json({ message: 'Quantité mise à jour' });
     });
 };
@@ -28,7 +34,10 @@ exports.removeGameFromCollection = (req, res) => {
     const userId = req.user.id;
 
     CollectionJeux.removeGameFromCollection(userId, jeu_id, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error('Erreur SQL removeGameFromCollection:', err);
+            return res.status(500).json({ error: err.message });
+        }
         res.json({ message: 'Jeu retiré de la collection' });
     });
 };
@@ -38,7 +47,10 @@ exports.getUserGameCollection = (req, res) => {
     const userId = req.user.id;
 
     CollectionJeux.getUserGameCollection(userId, (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error('Erreur SQL getUserGameCollection:', err);
+            return res.status(500).json({ error: err.message });
+        }
         res.json(results);
     });
 };
@@ -49,7 +61,10 @@ exports.checkUserHasGame = (req, res) => {
     const userId = req.user.id;
 
     CollectionJeux.checkUserHasGame(userId, jeu_id, (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error('Erreur SQL checkUserHasGame:', err);
+            return res.status(500).json({ error: err.message });
+        }
         if (results.length === 0) return res.json({ hasGame: false });
         res.json({ hasGame: true, quantite: results[0].quantite });
     });

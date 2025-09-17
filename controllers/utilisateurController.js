@@ -9,7 +9,10 @@ exports.creerUtilisateur = async (req, res) => {
     db.query('INSERT INTO utilisateurs (nom, email, mot_de_passe, role) VALUES (?, ?, ?, ?)', 
     [nom, email, hashedPassword, role || 'utilisateur'], 
     (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error('Erreur SQL creerUtilisateur:', err);
+            return res.status(500).json({ error: err.message });
+        }
         res.status(201).json({ message: 'Utilisateur créé avec succès', id: result.insertId });
     });
 };
@@ -27,23 +30,32 @@ exports.login = async (req, res) => {
 
         const token = jwt.sign({ id: user.id, role: user.role }, process.env.SECRET_KEY, { expiresIn: '1h' });
         db.query('UPDATE utilisateurs SET token = ?,date_expiration = NOW() WHERE id = ?', [token, user.id], (err) => {
-            if (err) return res.status(500).json({ error: err.message });
+            if (err) {
+                console.error('Erreur SQL login update token:', err);
+                return res.status(500).json({ error: err.message });
+            }
             // Token mis à jour dans la base de données
         });
-        // Envoi du token au client
+        // Envoi du token au client sans mot de passe
         res.json({ 
             token,
             email: user.email,
             role: user.role,
+            id: user.id
          });
     } catch (error) {
+        console.error('Erreur login catch:', error);
         return res.status(500).json({ error: 'Erreur interne du serveur' });
     }
 };
 
 exports.getUtilisateurs = (req, res) => {
     db.query('SELECT id, nom, email, role, date_inscription FROM utilisateurs', (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error('Erreur SQL getUtilisateurs:', err);
+            return res.status(500).json({ error: err.message });
+        }
+        // On ne renvoie pas le mot de passe
         res.json(results);
     });
 };
@@ -51,8 +63,12 @@ exports.getUtilisateurs = (req, res) => {
 exports.getUtilisateurById = (req, res) => {
     db.query('SELECT id, nom, email, role, date_inscription FROM utilisateurs WHERE id = ?', 
     [req.params.id], (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error('Erreur SQL getUtilisateurById:', err);
+            return res.status(500).json({ error: err.message });
+        }
         if (result.length === 0) return res.status(404).json({ error: 'Utilisateur non trouvé' });
+        // On ne renvoie pas le mot de passe
         res.json(result[0]);
     });
 };
@@ -64,38 +80,50 @@ exports.updateUtilisateur = async (req, res) => {
     db.query('UPDATE utilisateurs SET nom = ?, email = ?, mot_de_passe = COALESCE(?, mot_de_passe), role = ? WHERE id = ?', 
     [nom, email, hashedPassword, role, req.params.id], 
     (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error('Erreur SQL updateUtilisateur:', err);
+            return res.status(500).json({ error: err.message });
+        }
         res.json({ message: 'Utilisateur mis à jour avec succès' });
     });
 };
 
 exports.deleteUtilisateur = (req, res) => {
     db.query('DELETE FROM utilisateurs WHERE id = ?', [req.params.id], (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error('Erreur SQL deleteUtilisateur:', err);
+            return res.status(500).json({ error: err.message });
+        }
         res.json({ message: 'Utilisateur supprimé avec succès' });
     });
 };
 
 exports.verifyUtilisteurToken = (req, res) => {
     const { token, email } = req.body;
-    db.query('SELECT id,date_expiration,role FROM utilisateurs WHERE email = ? AND token = ?', [email, token], (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
+    db.query('SELECT id, date_expiration, role FROM utilisateurs WHERE email = ? AND token = ?', [email, token], (err, results) => {
+        if (err) {
+            console.error('Erreur SQL verifyUtilisteurToken:', err);
+            return res.status(500).json({ error: err.message });
+        }
         if (results.length === 0) return res.status(401).json({ error: 'Token invalide' });
-        
-        const user = results[0];
-        const isTokenExpired = new Date().setHours(new Date().getHours() - 1)  > new Date(user.date_expiration);
-        
-        if (isTokenExpired) return res.status(401).json({ error: 'Token expiré' });
 
-        const token = jwt.sign({ id: user.id, role: user.role }, process.env.SECRET_KEY, { expiresIn: '1h' });
-        db.query('UPDATE utilisateurs SET token = ?,date_expiration = NOW() WHERE id = ?', [token, userId], (err) => {
-            if (err) return res.status(500).json({ error: err.message });
-            // Token mis à jour dans la base de données
+        const user = results[0];
+        // Vérification expiration : le token est expiré si la date d'expiration est passée
+        const now = new Date();
+        const expiration = new Date(user.date_expiration);
+        if (expiration < now) return res.status(401).json({ error: 'Token expiré' });
+
+        // Générer un nouveau token et mettre à jour
+        const newToken = jwt.sign({ id: user.id, role: user.role }, process.env.SECRET_KEY, { expiresIn: '1h' });
+        db.query('UPDATE utilisateurs SET token = ?, date_expiration = NOW() WHERE id = ?', [newToken, user.id], (err) => {
+            if (err) {
+                console.error('Erreur SQL update token:', err);
+                return res.status(500).json({ error: err.message });
+            }
         });
-        
         res.json({ 
-            message: 'Token valide et mis a jour',
-            token: token,
+            message: 'Token valide et mis à jour',
+            token: newToken,
         });
     });
 }
