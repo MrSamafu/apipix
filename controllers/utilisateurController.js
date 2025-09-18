@@ -4,20 +4,43 @@ const jwt = require('jsonwebtoken');
 
 exports.creerUtilisateur = async (req, res) => {
     const { nom, email, mot_de_passe, role } = req.body;
-    const hashedPassword = await bcrypt.hash(mot_de_passe, 10);
-
-    db.query('INSERT INTO utilisateurs (nom, email, mot_de_passe, role) VALUES (?, ?, ?, ?)', 
-    [nom, email, hashedPassword, role || 'utilisateur'], 
-    (err, result) => {
-        if (err) {
-            console.error('Erreur SQL creerUtilisateur:', err);
-            if (err.code === 'ER_DUP_ENTRY') {
-                return res.status(409).json({ error: "Cet email existe déjà." });
+    // Vérification existence pseudo ou email
+    try {
+        const [existUsers] = await db.query(
+            'SELECT id, nom, email FROM utilisateurs WHERE nom = ? OR email = ?',
+            [nom, email]
+        );
+        if (existUsers.length > 0) {
+            const pseudoExists = existUsers.some(u => u.nom === nom);
+            const emailExists = existUsers.some(u => u.email === email);
+            let msg = '';
+            if (pseudoExists && emailExists) {
+                msg = "Le pseudo et l'adresse email existent déjà.";
+            } else if (pseudoExists) {
+                msg = "Le pseudo existe déjà.";
+            } else if (emailExists) {
+                msg = "L'adresse email existe déjà.";
             }
-            return res.status(500).json({ error: err.message });
+            return res.status(409).json({ error: msg });
         }
-        res.status(201).json({ message: 'Utilisateur créé avec succès', id: result.insertId });
-    });
+
+        const hashedPassword = await bcrypt.hash(mot_de_passe, 10);
+        db.query('INSERT INTO utilisateurs (nom, email, mot_de_passe, role) VALUES (?, ?, ?, ?)', 
+        [nom, email, hashedPassword, role || 'utilisateur'], 
+        (err, result) => {
+            if (err) {
+                console.error('Erreur SQL creerUtilisateur:', err);
+                if (err.code === 'ER_DUP_ENTRY') {
+                    return res.status(409).json({ error: "Cet email existe déjà." });
+                }
+                return res.status(500).json({ error: err.message });
+            }
+            res.status(201).json({ message: 'Utilisateur créé avec succès', id: result.insertId });
+        });
+    } catch (error) {
+        console.error('Erreur asynchrone creerUtilisateur:', error);
+        res.status(500).json({ error: 'Erreur interne du serveur' });
+    }
 };
 
 exports.login = async (req, res) => {
