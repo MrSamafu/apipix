@@ -11,8 +11,10 @@ exports.creerUtilisateur = async (req, res) => {
     (err, result) => {
         if (err) {
             console.error('Erreur SQL creerUtilisateur:', err);
-            res.status(500).json({ error: err.message });
-            return;
+            if (err.code === 'ER_DUP_ENTRY') {
+                return res.status(409).json({ error: "Cet email existe déjà." });
+            }
+            return res.status(500).json({ error: err.message });
         }
         res.status(201).json({ message: 'Utilisateur créé avec succès', id: result.insertId });
     });
