@@ -2,8 +2,39 @@ const db = require('../config/db.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+exports.login = async (req, res) => {
+    const { email, mot_de_passe } = req.body;
+    try {
+        const [results] = await db.query('SELECT * FROM utilisateurs WHERE email = ?', [email]);
+        if (results.length === 0) return res.status(400).json({ error: 'Utilisateur non trouvé' });
+        const user = results[0];
+        const validPassword = await bcrypt.compare(mot_de_passe, user.mot_de_passe);
+        if (!validPassword) return res.status(401).json({ error: 'Mot de passe incorrect' });
+        const token = jwt.sign({ id: user.id, role: user.role }, process.env.SECRET_KEY, { expiresIn: '1h' });
+        db.query('UPDATE utilisateurs SET token = ?,date_expiration = NOW() WHERE id = ?', [token, user.id], (err) => {
+            if (err) {
+                console.error('Erreur SQL login update token:', err);
+                return res.status(500).json({ error: err.message });
+            }
+        });
+        res.json({ token, email: user.email, role: user.role, id: user.id });
+    } catch (error) {
+        console.error('Erreur login catch:', error);
+        return res.status(500).json({ error: 'Erreur interne du serveur' });
+    }
+};
+
+exports.getUtilisateurs = (req, res) => {
+    db.query('SELECT id, nom, email, role, date_inscription FROM utilisateurs', (err, results) => {
+        if (err) {
+            console.error('Erreur SQL getUtilisateurs:', err);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(results);
+    });
+};
+
 exports.creerUtilisateur = async (req, res) => {
-    console.log("Création utilisateur avec données:", req.body);
         const { nom, email, mot_de_passe, role } = req.body;
         if (!nom || !email || !mot_de_passe) {
             return res.status(400).json({ error: "Tous les champs sont obligatoires." });
