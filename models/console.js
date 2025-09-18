@@ -1,12 +1,11 @@
 const db = require('../config/db');
 
 // Ajouter une console
-const addConsole = (consoleData, callback) => {
+const addConsole = (consoleData) => {
     const { nom, description, image_url } = consoleData;
-    db.query(
+    return db.query(
         'INSERT INTO consoles (nom, description, image_url) VALUES (?, ?, ?)',
-        [nom, description, image_url],
-        callback
+        [nom, description, image_url]
     );
 };
 
@@ -16,23 +15,22 @@ const getAllConsoles = () => {
 };
 
 // Récupérer une console par ID
-const getConsoleById = (id, callback) => {
-    db.query('SELECT * FROM consoles WHERE id = ?', [id], callback);
+const getConsoleById = (id) => {
+    return db.query('SELECT * FROM consoles WHERE id = ?', [id]);
 };
 
 // Mettre à jour une console
-const updateConsole = (id, consoleData, callback) => {
+const updateConsole = (id, consoleData) => {
     const { nom, description, image_url } = consoleData;
-    db.query(
+    return db.query(
         'UPDATE consoles SET nom = ?, description = ?, image_url = ? WHERE id = ?',
-        [nom, description, image_url, id],
-        callback
+        [nom, description, image_url, id]
     );
 };
 
 // Supprimer une console
-const deleteConsole = (id, callback) => {
-    db.query('DELETE FROM consoles WHERE id = ?', [id], callback);
+const deleteConsole = (id) => {
+    return db.query('DELETE FROM consoles WHERE id = ?', [id]);
 };
 
 module.exports = { addConsole, getAllConsoles, getConsoleById, updateConsole, deleteConsole };

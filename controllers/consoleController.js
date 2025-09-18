@@ -1,14 +1,14 @@
 const Console = require('../models/console');
 
 // Ajouter une console
-exports.createConsole = (req, res) => {
-    Console.addConsole(req.body, (err, result) => {
-        if (err) {
-            console.error('Erreur SQL createConsole:', err);
-            return res.status(500).json({ error: err.message });
-        }
+exports.createConsole = async (req, res) => {
+    try {
+        const [result] = await Console.addConsole(req.body);
         res.status(201).json({ message: 'Console ajoutée avec succès', id: result.insertId });
-    });
+    } catch (err) {
+        console.error('Erreur SQL createConsole:', err);
+        res.status(500).json({ error: err.message });
+    }
 };
 
 // Récupérer toutes les consoles
@@ -23,35 +23,35 @@ exports.getAllConsoles = async (req, res) => {
 };
 
 // Récupérer une console par ID
-exports.getConsoleById = (req, res) => {
-    Console.getConsoleById(req.params.id, (err, results) => {
-        if (err) {
-            console.error('Erreur SQL getConsoleById:', err);
-            return res.status(500).json({ error: err.message });
-        }
+exports.getConsoleById = async (req, res) => {
+    try {
+        const [results] = await Console.getConsoleById(req.params.id);
         if (results.length === 0) return res.status(404).json({ error: 'Console non trouvée' });
         res.json(results[0]);
-    });
+    } catch (err) {
+        console.error('Erreur SQL getConsoleById:', err);
+        res.status(500).json({ error: err.message });
+    }
 };
 
 // Mettre à jour une console
-exports.updateConsole = (req, res) => {
-    Console.updateConsole(req.params.id, req.body, (err, result) => {
-        if (err) {
-            console.error('Erreur SQL updateConsole:', err);
-            return res.status(500).json({ error: err.message });
-        }
+exports.updateConsole = async (req, res) => {
+    try {
+        await Console.updateConsole(req.params.id, req.body);
         res.json({ message: 'Console mise à jour avec succès' });
-    });
+    } catch (err) {
+        console.error('Erreur SQL updateConsole:', err);
+        res.status(500).json({ error: err.message });
+    }
 };
 
 // Supprimer une console
-exports.deleteConsole = (req, res) => {
-    Console.deleteConsole(req.params.id, (err, result) => {
-        if (err) {
-            console.error('Erreur SQL deleteConsole:', err);
-            return res.status(500).json({ error: err.message });
-        }
+exports.deleteConsole = async (req, res) => {
+    try {
+        await Console.deleteConsole(req.params.id);
         res.json({ message: 'Console supprimée avec succès' });
-    });
+    } catch (err) {
+        console.error('Erreur SQL deleteConsole:', err);
+        res.status(500).json({ error: err.message });
+    }
 };
