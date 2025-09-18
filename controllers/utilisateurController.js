@@ -11,7 +11,8 @@ exports.creerUtilisateur = async (req, res) => {
     (err, result) => {
         if (err) {
             console.error('Erreur SQL creerUtilisateur:', err);
-            return res.status(500).json({ error: err.message });
+            res.status(500).json({ error: err.message });
+            return;
         }
         res.status(201).json({ message: 'Utilisateur créé avec succès', id: result.insertId });
     });
