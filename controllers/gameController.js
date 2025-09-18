@@ -1,57 +1,57 @@
 const Game = require('../models/game');
 
 // Ajouter un jeu
-exports.createGame = (req, res) => {
-    Game.addGame(req.body, (err, result) => {
-        if (err) {
-            console.error('Erreur SQL createGame:', err);
-            return res.status(500).json({ error: err.message });
-        }
+exports.createGame = async (req, res) => {
+    try {
+        const [result] = await Game.addGame(req.body);
         res.status(201).json({ message: 'Jeu ajouté avec succès', id: result.insertId });
-    });
+    } catch (err) {
+        console.error('Erreur SQL createGame:', err);
+        res.status(500).json({ error: err.message });
+    }
 };
 
 // Récupérer tous les jeux
-exports.getAllGames = (req, res) => {
-    Game.getAllGames((err, results) => {
-        if (err) {
-            console.error('Erreur SQL getAllGames:', err);
-            return res.status(500).json({ error: err.message });
-        }
+exports.getAllGames = async (req, res) => {
+    try {
+        const [results] = await Game.getAllGames();
         res.json(results);
-    });
+    } catch (err) {
+        console.error('Erreur SQL getAllGames:', err);
+        res.status(500).json({ error: err.message });
+    }
 };
 
 // Récupérer un jeu par ID
-exports.getGameById = (req, res) => {
-    Game.getGameById(req.params.id, (err, results) => {
-        if (err) {
-            console.error('Erreur SQL getGameById:', err);
-            return res.status(500).json({ error: err.message });
-        }
+exports.getGameById = async (req, res) => {
+    try {
+        const [results] = await Game.getGameById(req.params.id);
         if (results.length === 0) return res.status(404).json({ error: 'Jeu non trouvé' });
         res.json(results[0]);
-    });
+    } catch (err) {
+        console.error('Erreur SQL getGameById:', err);
+        res.status(500).json({ error: err.message });
+    }
 };
 
 // Mettre à jour un jeu
-exports.updateGame = (req, res) => {
-    Game.updateGame(req.params.id, req.body, (err, result) => {
-        if (err) {
-            console.error('Erreur SQL updateGame:', err);
-            return res.status(500).json({ error: err.message });
-        }
+exports.updateGame = async (req, res) => {
+    try {
+        await Game.updateGame(req.params.id, req.body);
         res.json({ message: 'Jeu mis à jour avec succès' });
-    });
+    } catch (err) {
+        console.error('Erreur SQL updateGame:', err);
+        res.status(500).json({ error: err.message });
+    }
 };
 
 // Supprimer un jeu
-exports.deleteGame = (req, res) => {
-    Game.deleteGame(req.params.id, (err, result) => {
-        if (err) {
-            console.error('Erreur SQL deleteGame:', err);
-            return res.status(500).json({ error: err.message });
-        }
+exports.deleteGame = async (req, res) => {
+    try {
+        await Game.deleteGame(req.params.id);
         res.json({ message: 'Jeu supprimé avec succès' });
-    });
+    } catch (err) {
+        console.error('Erreur SQL deleteGame:', err);
+        res.status(500).json({ error: err.message });
+    }
 };

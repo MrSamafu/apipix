@@ -1,38 +1,36 @@
 const db = require('../config/db');
 
 // Ajouter une donnée au référentiel
-const addReferentiel = (referentielData, callback) => {
+const addReferentiel = (referentielData) => {
     const { type, valeur } = referentielData;
-    db.query(
+    return db.query(
         'INSERT INTO referentiel (type, valeur) VALUES (?, ?)',
-        [type, valeur],
-        callback
+        [type, valeur]
     );
 };
 
 // Récupérer toutes les données du référentiel
-const getAllReferentiels = (callback) => {
-    db.query('SELECT * FROM referentiel', callback);
+const getAllReferentiels = () => {
+    return db.query('SELECT * FROM referentiel');
 };
 
 // Récupérer une donnée spécifique du référentiel par ID
-const getReferentielById = (id, callback) => {
-    db.query('SELECT * FROM referentiel WHERE id = ?', [id], callback);
+const getReferentielById = (id) => {
+    return db.query('SELECT * FROM referentiel WHERE id = ?', [id]);
 };
 
 // Mettre à jour une donnée du référentiel
-const updateReferentiel = (id, referentielData, callback) => {
+const updateReferentiel = (id, referentielData) => {
     const { type, valeur } = referentielData;
-    db.query(
+    return db.query(
         'UPDATE referentiel SET type = ?, valeur = ? WHERE id = ?',
-        [type, valeur, id],
-        callback
+        [type, valeur, id]
     );
 };
 
 // Supprimer une donnée du référentiel
-const deleteReferentiel = (id, callback) => {
-    db.query('DELETE FROM referentiel WHERE id = ?', [id], callback);
+const deleteReferentiel = (id) => {
+    return db.query('DELETE FROM referentiel WHERE id = ?', [id]);
 };
 
 module.exports = { addReferentiel, getAllReferentiels, getReferentielById, updateReferentiel, deleteReferentiel };
