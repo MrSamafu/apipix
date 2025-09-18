@@ -24,19 +24,20 @@ exports.creerUtilisateur = async (req, res) => {
             return res.status(409).json({ error: msg });
         }
 
-        const hashedPassword = await bcrypt.hash(mot_de_passe, 10);
-        db.query('INSERT INTO utilisateurs (nom, email, mot_de_passe, role) VALUES (?, ?, ?, ?)', 
-        [nom, email, hashedPassword, role || 'utilisateur'], 
-        (err, result) => {
-            if (err) {
+            try {
+                const hashedPassword = await bcrypt.hash(mot_de_passe, 10);
+                const [result] = await db.query(
+                    'INSERT INTO utilisateurs (nom, email, mot_de_passe, role) VALUES (?, ?, ?, ?)',
+                    [nom, email, hashedPassword, role || 'utilisateur']
+                );
+                res.status(201).json({ message: 'Utilisateur créé avec succès', id: result.insertId });
+            } catch (err) {
                 console.error('Erreur SQL creerUtilisateur:', err);
                 if (err.code === 'ER_DUP_ENTRY') {
                     return res.status(409).json({ error: "Cet email existe déjà." });
                 }
                 return res.status(500).json({ error: err.message });
             }
-            res.status(201).json({ message: 'Utilisateur créé avec succès', id: result.insertId });
-        });
     } catch (error) {
         console.error('Erreur asynchrone creerUtilisateur:', error);
         res.status(500).json({ error: 'Erreur interne du serveur' });
