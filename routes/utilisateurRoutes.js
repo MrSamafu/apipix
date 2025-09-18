@@ -3,7 +3,7 @@ const router = express.Router();
 const utilisateurController = require('../controllers/utilisateurController');
 const authenticateToken = require('../middlewares/authMiddleware');
 
-router.post('/', utilisateurController.creerUtilisateur);
+router.post('/register', utilisateurController.creerUtilisateur);
 router.post('/login', utilisateurController.login);
 router.post('/verifyToken', utilisateurController.verifyUtilisteurToken);
 router.get('/', authenticateToken, utilisateurController.getUtilisateurs);
