@@ -11,8 +11,8 @@ const addConsole = (consoleData, callback) => {
 };
 
 // Récupérer toutes les consoles
-const getAllConsoles = (callback) => {
-    db.query('SELECT * FROM consoles', callback);
+const getAllConsoles = () => {
+    return db.query('SELECT * FROM consoles');
 };
 
 // Récupérer une console par ID

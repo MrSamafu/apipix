@@ -12,14 +12,14 @@ exports.createConsole = (req, res) => {
 };
 
 // Récupérer toutes les consoles
-exports.getAllConsoles = (req, res) => {
-    Console.getAllConsoles((err, results) => {
-        if (err) {
-            console.error('Erreur SQL getAllConsoles:', err);
-            return res.status(500).json({ error: err.message });
-        }
+exports.getAllConsoles = async (req, res) => {
+    try {
+        const [results] = await Console.getAllConsoles();
         res.json(results);
-    });
+    } catch (err) {
+        console.error('Erreur SQL getAllConsoles:', err);
+        res.status(500).json({ error: err.message });
+    }
 };
 
 // Récupérer une console par ID
