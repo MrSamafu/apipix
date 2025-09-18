@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 exports.creerUtilisateur = async (req, res) => {
+    console.log("Création utilisateur avec données:", req.body);
     try {
         const { nom, email, mot_de_passe, role } = req.body;
         if (!nom || !email || !mot_de_passe) {
