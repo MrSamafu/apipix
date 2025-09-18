@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 
 exports.creerUtilisateur = async (req, res) => {
     console.log("Création utilisateur avec données:", req.body);
-    try {
         const { nom, email, mot_de_passe, role } = req.body;
         if (!nom || !email || !mot_de_passe) {
             return res.status(400).json({ error: "Tous les champs sont obligatoires." });
@@ -39,10 +38,6 @@ exports.creerUtilisateur = async (req, res) => {
             }
             res.status(201).json({ message: 'Utilisateur créé avec succès', id: result.insertId });
         });
-    } catch (error) {
-        console.error('Erreur asynchrone creerUtilisateur:', error);
-        res.status(500).json({ error: 'Erreur interne du serveur' });
-    }
 }
 exports.updateUtilisateur = async (req, res) => {
     const { nom, email, mot_de_passe, role } = req.body;
