@@ -2,10 +2,10 @@ const db = require('../config/db');
 
 // Ajouter un jeu
 const addGame = (game) => {
-    const { titre, description, image_url } = game;
+    const { titre, description, image_url, editeur, developpeur, annee_sortie, id_reference, id_createur } = game;
     return db.query(
-        'INSERT INTO jeux (titre, description, image_url) VALUES (?, ?, ?)',
-        [titre, description, image_url]
+        'INSERT INTO jeux (titre, description, image_url, editeur, developpeur, annee_sortie, id_reference, id_createur) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        [titre, description, image_url, editeur, developpeur, annee_sortie, id_reference, id_createur]
     );
 };
 
@@ -21,10 +21,10 @@ const getGameById = (id) => {
 
 // Mettre à jour un jeu
 const updateGame = (id, game) => {
-    const { titre, description, image_url } = game;
+    const { titre, description, image_url, editeur, developpeur, annee_sortie, id_reference, id_createur } = game;
     return db.query(
-        'UPDATE jeux SET titre = ?, description = ?, image_url = ? WHERE id = ?',
-        [titre, description, image_url, id]
+        'UPDATE jeux SET titre = ?, description = ?, image_url = ?, editeur = ?, developpeur = ?, annee_sortie = ?, id_reference = ?, id_createur = ? WHERE id = ?',
+        [titre, description, image_url, editeur, developpeur, annee_sortie, id_reference, id_createur, id]
     );
 };
 

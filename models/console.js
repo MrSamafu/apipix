@@ -2,10 +2,10 @@ const db = require('../config/db');
 
 // Ajouter une console
 const addConsole = (consoleData) => {
-    const { nom, description, image_url } = consoleData;
+    const { nom, description, image_url, constructeur, annee_sortie } = consoleData;
     return db.query(
-        'INSERT INTO consoles (nom, description, image_url) VALUES (?, ?, ?)',
-        [nom, description, image_url]
+        'INSERT INTO consoles (nom, description, image_url, constructeur, annee_sortie) VALUES (?, ?, ?)',
+        [nom, description, image_url, constructeur, annee_sortie]
     );
 };
 
@@ -21,10 +21,10 @@ const getConsoleById = (id) => {
 
 // Mettre à jour une console
 const updateConsole = (id, consoleData) => {
-    const { nom, description, image_url } = consoleData;
+    const { nom, description, image_url, constructeur, annee_sortie } = consoleData;
     return db.query(
-        'UPDATE consoles SET nom = ?, description = ?, image_url = ? WHERE id = ?',
-        [nom, description, image_url, id]
+        'UPDATE consoles SET nom = ?, description = ?, image_url = ?, constructeur = ?, annee_sortie = ? WHERE id = ?',
+        [nom, description, image_url, constructeur, annee_sortie, id]
     );
 };
 
