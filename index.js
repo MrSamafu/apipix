@@ -23,13 +23,13 @@ app.use(express.json());
 
 // Routes
 app.use('/utilisateurs', utilisateurRoutes);
-app.use('/api', gameRoutes);
-app.use('/api', consoleRoutes);
-app.use('/api', accessoireRoutes);
-app.use('/api', referentielRoutes);
-app.use('/api', collectionJeuxRoutes);
-app.use('/api', collectionConsolesRoutes);
-app.use('/api', collectionAccessoiresRoutes);
+app.use('/api/jeux', gameRoutes);
+app.use('/api/consoles', consoleRoutes);
+app.use('/api/accessoires', accessoireRoutes);
+app.use('/api/referentiels', referentielRoutes);
+app.use('/api/collections/jeux', collectionJeuxRoutes);
+app.use('/api/collections/consoles', collectionConsolesRoutes);
+app.use('/api/collections/accessoires', collectionAccessoiresRoutes);
 
 // Démarrer le serveur
 app.listen(port, () => {

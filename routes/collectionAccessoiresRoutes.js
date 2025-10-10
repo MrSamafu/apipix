@@ -4,10 +4,10 @@ const collectionAccessoiresController = require('../controllers/collectionAccess
 const authenticateToken = require('../middlewares/authMiddleware');
 
 // Routes pour la gestion des collections d'accessoires
-router.post('/collection/accessoires', authenticateToken, collectionAccessoiresController.addAccessoireToCollection);
-router.put('/collection/accessoires', authenticateToken, collectionAccessoiresController.updateAccessoireQuantity);
-router.delete('/collection/accessoires', authenticateToken, collectionAccessoiresController.removeAccessoireFromCollection);
-router.get('/collection/accessoires', authenticateToken, collectionAccessoiresController.getUserAccessoireCollection);
-router.post('/collection/accessoires/check', authenticateToken, collectionAccessoiresController.checkUserHasAccessoire);
+router.post('/', authenticateToken, collectionAccessoiresController.addAccessoireToCollection);
+router.put('/', authenticateToken, collectionAccessoiresController.updateAccessoireQuantity);
+router.delete('/', authenticateToken, collectionAccessoiresController.removeAccessoireFromCollection);
+router.get('/', authenticateToken, collectionAccessoiresController.getUserAccessoireCollection);
+router.post('/check', authenticateToken, collectionAccessoiresController.checkUserHasAccessoire);
 
 module.exports = router;

@@ -4,10 +4,10 @@ const collectionConsolesController = require('../controllers/collectionConsolesC
 const authenticateToken = require('../middlewares/authMiddleware');
 
 // Routes pour la gestion des collections de consoles
-router.post('/collection/consoles', authenticateToken, collectionConsolesController.addConsoleToCollection);
-router.put('/collection/consoles', authenticateToken, collectionConsolesController.updateConsoleQuantity);
-router.delete('/collection/consoles', authenticateToken, collectionConsolesController.removeConsoleFromCollection);
-router.get('/collection/consoles', authenticateToken, collectionConsolesController.getUserConsoleCollection);
-router.post('/collection/consoles/check', authenticateToken, collectionConsolesController.checkUserHasConsole);
+router.post('/', authenticateToken, collectionConsolesController.addConsoleToCollection);
+router.put('/', authenticateToken, collectionConsolesController.updateConsoleQuantity);
+router.delete('/', authenticateToken, collectionConsolesController.removeConsoleFromCollection);
+router.get('/', authenticateToken, collectionConsolesController.getUserConsoleCollection);
+router.post('/check', authenticateToken, collectionConsolesController.checkUserHasConsole);
 
 module.exports = router;
